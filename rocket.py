@@ -1,72 +1,64 @@
+# rocket.py
 from OpenGL.GL import *
 import config
 import math
 
+
 class Rocket:
-    def __init__(self, x=config.ROCKET_INITIAL_X, y=config.ROCKET_INITIAL_Y):
+    def __init__(self):
 
-        # Estado cinemático
-        self.x = x
-        self.y = y
-        self.vx = 0.0  # Velocidad en X
-        self.vy = 0.0  # Velocidad en Y
-        self.angle = 0.0  # Ángulo (0 grados = vertical hacia arriba)
+        # Estado cinemático m y m/s
+        self.x = config.ROCKET_INITIAL_X_METERS
+        self.y = config.ROCKET_INITIAL_Y_METERS
+        self.vx = 0.0  # m/s
+        self.vy = 0.0  # m/s
 
-        # Dimensiones
-        self.width = config.ROCKET_WIDTH
-        self.body_height = config.ROCKET_BODY_HEIGHT
-        self.nose_height = config.ROCKET_NOSE_HEIGHT
-        self.fin_width = config.ROCKET_FIN_WIDTH
-        self.fin_height = config.ROCKET_FIN_HEIGHT
+        # Dimensiones visuales
+        self.width_px = config.ROCKET_WIDTH_PX
+        self.body_height_px = config.ROCKET_BODY_HEIGHT_PX
+        self.nose_height_px = config.ROCKET_NOSE_HEIGHT_PX
+        self.fin_width_px = config.ROCKET_FIN_WIDTH_PX
+        self.fin_height_px = config.ROCKET_FIN_HEIGHT_PX
+
+        # Estado cinematico angular
+        self.angle = math.radians(-30) # rad
+        self.angular_velocity = 0.0  # rad/s
+        self.angular_acceleration = 0.0  # rad/s^2
 
         # Estado físico
-        self.dry_mass = config.ROCKET_DRY_MASS # Masa estructural
-        self.water_mass = config.INITIAL_WATER_MASS # Masa de agua actual
-        self.mass = self.dry_mass + self.water_mass  # Masa total actual
+        self.dry_mass = config.ROCKET_DRY_MASS
+        self.water_mass = config.INITIAL_WATER_MASS
+        self.mass = self.dry_mass + self.water_mass
+        self.bottle_volume = config.BOTTLE_VOLUME
+        self.nozzle_area = config.NOZZLE_AREA
+        self.initial_air_volume = self.bottle_volume - (self.water_mass / config.WATER_DENSITY)
+        self.initial_air_pressure = config.INITIAL_AIR_PRESSURE_ABSOLUTE
+        self.current_air_pressure = self.initial_air_pressure
 
-        # Presion y empuje
-        self.bottle_volume = config.BOTTLE_VOLUME  # m^3
-        self.nozzle_area = config.NOZZLE_AREA  # m^2
+        # Dimensiones físicas
+        self.length = config.ROCKET_LENGTH_METERS  # m
+        self.moment_of_inertia = (1 / 12) * self.mass * (self.length ** 2)  # Momento de inercia (kg*m^2)
 
-        initial_water_volume_m3 = self.water_mass / config.WATER_DENSITY
-        self.initial_air_volume = self.bottle_volume - initial_water_volume_m3  # m^3
-
-        # Estado inicial y actual de la presión del aire
-        self.initial_air_pressure = config.INITIAL_AIR_PRESSURE_ABSOLUTE  # Pa (Absoluta)
-        self.current_air_pressure = self.initial_air_pressure  # Pa (Absoluta)
-
-        if self.initial_air_volume <= 0:
-            print("¡Advertencia! El volumen de agua inicial excede o iguala el volumen de la botella.")
-            self.initial_air_volume = 1e-9  # Poner un valor muy pequeño para evitar división por cero
-
-        print(f"Cohete creado en ({self.x:.1f}, {self.y:.1f})")
-        print(f"Masa inicial: {self.mass:.2f} kg (Seca: {self.dry_mass:.2f} kg, Agua: {self.water_mass:.2f} kg)")
-        print(f"Volumen Botella: {self.bottle_volume * 1000:.1f} L, Agua Inicial: {initial_water_volume_m3 * 1000:.1f} L")
-        print(f"Volumen Aire Inicial: {self.initial_air_volume * 1000:.2f} L")
-        print(f"Presión Aire Inicial: {self.current_air_pressure / 1000:.1f} kPa (Absoluta)")
-
-        # Debug
-        print(f"Cohete creado en ({self.x:.1f}, {self.y:.1f})")
-        print(f"  Masa inicial: {self.mass:.2f} kg (Seca: {self.dry_mass:.2f} kg, Agua: {self.water_mass:.2f} kg)")
+        if self.initial_air_volume <= 1e-9:
+            print("Volumen de agua inicial >= volumen de la botella.")
+            self.initial_air_volume = 1e-9
 
     def draw(self):
-
-        # Matriz de transformacion
         glPushMatrix()
+        pos_x_px = self.x * config.PIXELS_PER_METER
+        pos_y_px = self.y * config.PIXELS_PER_METER
 
-        # Transformaciones: Translación y rotación
-        glTranslatef(self.x, self.y, 0.0)  # Origen a (x,y) de cohete
-        glRotatef(self.angle, 0.0, 0.0, 1.0)  # Rotacion eje Z
+        glTranslatef(pos_x_px, pos_y_px, 0.0)
+        glRotatef(math.degrees(self.angle), 0.0, 0.0, 1.0) # Convertir ángulo de radianes a grados
 
-        # Cohete
         body_bottom = 0
-        body_top = self.body_height
-        half_width = self.width / 2
+        body_top = self.body_height_px
+        half_width = self.width_px / 2
 
-        v1 = (-half_width, body_bottom)  # II
-        v2 = (half_width, body_bottom)  # ID
-        v3 = (half_width, body_top)  # SD
-        v4 = (-half_width, body_top)  # SI
+        v1 = (-half_width, body_bottom)
+        v2 = (half_width, body_bottom)
+        v3 = (half_width, body_top)
+        v4 = (-half_width, body_top)
 
         glColor3f(*config.ROCKET_BODY_COLOR)
         glBegin(GL_TRIANGLES)
@@ -82,25 +74,21 @@ class Rocket:
         glBegin(GL_TRIANGLES)
         glVertex2f(-half_width, body_top)
         glVertex2f(half_width, body_top)
-        glVertex2f(0, body_top + self.nose_height)
+        glVertex2f(0, body_top + self.nose_height_px)
         glEnd()
 
         glColor3f(*config.ROCKET_FIN_COLOR)
         fin_base_y = body_bottom + 10
+
         glBegin(GL_TRIANGLES)
         glVertex2f(-half_width, fin_base_y)
-        glVertex2f(-half_width, fin_base_y + self.fin_height)
-        glVertex2f(-half_width - self.fin_width, fin_base_y)
+        glVertex2f(-half_width, fin_base_y + self.fin_height_px)
+        glVertex2f(-half_width - self.fin_width_px, fin_base_y)
         glEnd()
 
         glBegin(GL_TRIANGLES)
         glVertex2f(half_width, fin_base_y)
-        glVertex2f(half_width, fin_base_y + self.fin_height)
-        glVertex2f(half_width + self.fin_width, fin_base_y)
+        glVertex2f(half_width, fin_base_y + self.fin_height_px)
+        glVertex2f(half_width + self.fin_width_px, fin_base_y)
         glEnd()
-
         glPopMatrix()
-
-    # --- Métodos futuros ---
-    # def update_physics(self, dt):
-    #    pass
