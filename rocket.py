@@ -1,4 +1,3 @@
-# rocket.py
 from OpenGL.GL import *
 import config
 import math
@@ -6,12 +5,15 @@ import math
 
 class Rocket:
     def __init__(self):
-
+        self.current_thrust_magnitude = 0.0
         # Estado cinemático m y m/s
         self.x = config.ROCKET_INITIAL_X_METERS
         self.y = config.ROCKET_INITIAL_Y_METERS
         self.vx = 0.0  # m/s
         self.vy = 0.0  # m/s
+
+        self.launch_pos_x = self.x
+        self.launch_pos_y = self.y
 
         # Dimensiones visuales
         self.width_px = config.ROCKET_WIDTH_PX
@@ -42,6 +44,10 @@ class Rocket:
         if self.initial_air_volume <= 1e-9:
             print("Volumen de agua inicial >= volumen de la botella.")
             self.initial_air_volume = 1e-9
+
+        self.show_flight_results = False
+        self.flight_horizontal_range = 0.0
+        self.flight_total_displacement = 0.0
 
     def draw(self):
         glPushMatrix()

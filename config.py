@@ -4,7 +4,7 @@ import math
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 WINDOW_TITLE = b"WATER ROCKET"
-VIEW_HEIGHT = WINDOW_HEIGHT * 10 # Vista Alejada
+VIEW_HEIGHT = WINDOW_HEIGHT * 6# Vista Alejada
 
 PIXELS_PER_METER = 30  # Cuantos píxeles son 1 metro.
 
@@ -35,7 +35,7 @@ ROCKET_LENGTH_METERS = (ROCKET_BODY_HEIGHT_PX + ROCKET_NOSE_HEIGHT_PX) / PIXELS_
 
 # Masa
 ROCKET_DRY_MASS = 0.5  # kg
-INITIAL_WATER_VOLUME = 0.03  # Litros
+INITIAL_WATER_VOLUME = 0.2  # Litros
 WATER_DENSITY = 1000 # kg/m^3
 INITIAL_WATER_MASS = INITIAL_WATER_VOLUME * 1 # kg
 ROCKET_INITIAL_MASS = ROCKET_DRY_MASS + INITIAL_WATER_MASS
@@ -45,7 +45,7 @@ MASS_FLOW_RATE = 0.5 # kg/s
 ATMOSPHERIC_PRESSURE = 101325.0 # Pa
 INITIAL_AIR_PRESSURE_GAUGE = 10.0 * ATMOSPHERIC_PRESSURE # Pa (manométrica)
 INITIAL_AIR_PRESSURE_ABSOLUTE = INITIAL_AIR_PRESSURE_GAUGE + ATMOSPHERIC_PRESSURE
-BOTTLE_VOLUME = 0.002 # m^3
+BOTTLE_VOLUME = 0.05 # m^3
 NOZZLE_RADIUS = 0.01 # m
 NOZZLE_AREA = math.pi * (NOZZLE_RADIUS ** 2) # m^2
 
@@ -57,9 +57,22 @@ DRAG_COEFFICIENT = 0.5 # Coeficiente de arrastre
 # Un valor positivo tiende a estabilizar el cohete (efecto veleta).
 # Valores típicos pequeños (ej: 0.1 a 2.0).
 AERO_TORQUE_COEFFICIENT = 0.025 # Coeficiente para el torque aerodinámico
+CURRENT_LAUNCH_ANGLE_RAD = -45
 
 # Constantes físicas
-GRAVITY_ACCELERATION = 9.81 # m/s^2
+GRAVITY_ACCELERATION = 20 # m/s^2
+
+# Constantes para Partículas de Agua
+PARTICLES_PER_EMISSION = 10       # Cuántas partículas se emiten en cada frame
+PARTICLE_LIFETIME_MIN = 0.3       # Segundos
+PARTICLE_LIFETIME_MAX = 0.8       # Segundos
+PARTICLE_SPEED_MIN = 5.0          # m/s
+PARTICLE_SPEED_MAX = 15.0         # m/s
+PARTICLE_SPREAD_ANGLE = 15        # Grados de dispersión a cada lado del chorro
+PARTICLE_COLOR = (0.6, 0.8, 1.0)
+PARTICLE_SIZE_MIN = 2.0           # Px
+PARTICLE_SIZE_MAX = 4.0           # Px
+PARTICLE_GRAVITY_FACTOR = 0.5     # Factor para la gravedad sobre las partículas (0.0 a 1.0)
 
 # Temporizador y Control de Simulación
 MILLISECONDS_PER_FRAME = 16
