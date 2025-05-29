@@ -8,7 +8,7 @@ import graphics
 def update_loop(value):
     rocket = graphics.rocket_instance
     if not rocket:
-        print("Error: Instancia del cohete no encontrada en timer.py")
+        print("Error")
         glutTimerFunc(config.MILLISECONDS_PER_FRAME, update_loop, 0)
         return
 
@@ -18,7 +18,7 @@ def update_loop(value):
        hasattr(rocket, 'current_thrust_magnitude') and rocket.current_thrust_magnitude > 0:
         particle_system.emit_particles(rocket)
 
-    particle_system.update_particles(config.TIME_STEP) # Actualizar todas las partículas siempre
+    particle_system.update_particles(config.TIME_STEP) # Actualizar particulas
 
-    glutPostRedisplay() # Solicitar redibujo
+    glutPostRedisplay()
     glutTimerFunc(config.MILLISECONDS_PER_FRAME, update_loop, value + 1)

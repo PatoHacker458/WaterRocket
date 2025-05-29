@@ -2,7 +2,6 @@ from OpenGL.GL import *
 import config
 import math
 
-
 class Rocket:
     def __init__(self):
         self.current_thrust_magnitude = 0.0

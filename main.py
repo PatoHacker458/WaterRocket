@@ -16,7 +16,7 @@ def get_user_launch_parameters():
     default_pressure_atm_manometric = config.INITIAL_AIR_PRESSURE_GAUGE / config.ATMOSPHERIC_PRESSURE
     default_water_liters = config.INITIAL_WATER_VOLUME
     default_dry_mass_kg = config.ROCKET_DRY_MASS
-    default_initial_angle_deg = 0.0
+    default_initial_angle_deg = -45
 
     try:
         pressure_str = input(
@@ -89,8 +89,8 @@ def main():
     glutKeyboardFunc(input_handler.keyboard_func)
 
     print("Controles:")
-    print("  ESPACIO: Lanzar")
-    print("  R: Reiniciar")
+    print("ESPACIO: Lanzar")
+    print("R: Reiniciar")
 
     glutTimerFunc(config.MILLISECONDS_PER_FRAME, timer.update_loop, 0)
     glutMainLoop()

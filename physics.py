@@ -1,15 +1,13 @@
-# physics.py
 import config
 import math
 
-# Flag global para controlar el mensaje de "Agua agotada" una vez por vuelo.
 water_depleted_message_sent = False
 
 
 def calculate_forces_and_torque(rocket):
     global water_depleted_message_sent
 
-    # FUERZA DE GRAVEDAD (siempre actúa)
+    # FUERZA DE GRAVEDAD
     gravity_force_y = -rocket.mass * config.GRAVITY_ACCELERATION
 
     # FUERZA DE EMPUJE (THRUST)

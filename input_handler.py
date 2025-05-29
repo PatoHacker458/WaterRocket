@@ -15,7 +15,7 @@ def keyboard_func(key, x, y):
 
     rocket = graphics.rocket_instance
     if not rocket and key not in [b'\x1b']:
-        print("Advertencia: Instancia del cohete no encontrada en input_handler.")
+        print("Error")
         return
 
     if key == b' ':  # Espacio
@@ -86,6 +86,6 @@ def keyboard_func(key, x, y):
             physics.water_depleted_message_sent = False
             glutPostRedisplay()
 
-    elif key == b'\x1b':  # Tecla ESC
+    elif key == b'\x1b':  # ESC
         print("FINALIZANDO")
         sys.exit(0)
